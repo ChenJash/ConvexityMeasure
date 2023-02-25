@@ -1,4 +1,4 @@
-##### 代码接口
+#### 代码接口
 
 每个实现中保留一个类似如下对外接口：
 
@@ -12,7 +12,7 @@ const std::vector<int> &_cluster_labels); // 标准数据
 
 
 
-##### 文件管理
+#### 文件管理
 
 - convexity 文件夹放置measure核心代码
 - utils 文件夹放置通用函数代码
@@ -23,7 +23,7 @@ const std::vector<int> &_cluster_labels); // 标准数据
 
 
 
-##### 代码管理
+#### 代码管理
 
 每次新项目前**开一个分支**，可以用自己名字，也可以用measure名字
 
@@ -31,7 +31,7 @@ const std::vector<int> &_cluster_labels); // 标准数据
 
 
 
-##### 记录完成情况
+#### 记录完成情况
 
 做之前/做完一个measure在下面的文档更新一下状态，保证不重复工作即可：
 
