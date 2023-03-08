@@ -231,13 +231,13 @@ const int &N, const int &num, const int &square_len, const int &maxLabel) {
         }
         tmp_S1 = label_count[li];
         tmp_S0 = convexityMeasure(nodes, cnt) * tmp_S1;
-        std::cout << "tmp_S0: " << tmp_S0 << ", tmp_S1: " << tmp_S1 << '\n';
-        if (li == 0) {
-            for (int i = 0; i < cnt; i++) {
-                std::cout << nodes[i][0] << ", " << nodes[i][1] << '\n';
-            }
-        }
-        std::cout << cnt << '\n';
+        //std::cout << "tmp_S0: " << tmp_S0 << ", tmp_S1: " << tmp_S1 << '\n';
+        // if (li == 0) {
+        //     for (int i = 0; i < cnt; i++) {
+        //         std::cout << nodes[i][0] << ", " << nodes[i][1] << '\n';
+        //     }
+        // }
+        // std::cout << cnt << '\n';
 
         S1 += tmp_S1;
         S0 += tmp_S0;
