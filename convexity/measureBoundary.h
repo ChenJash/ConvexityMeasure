@@ -141,24 +141,25 @@ const int &N, const int &num, const int &square_len, const int &maxLabel) {
                 py = y;
             }
         }
-        int nx = px; int ny = py+1; int dir = GO_UP;
-        nodes[0][0] = nx; nodes[0][1] = py; cnt = 1;
-        //std::cout << "nx: " << nx << ", ny: " << ny << '\n';
-        // 规定走向为顺时针
+        nodes[0][0] = px; nodes[0][1] = py; cnt = 1;
+        int nx = px+1; int ny = py; int dir = GO_RIGHT;
+        // 规定走向为逆时针
         while (true) {
+            //std::cout << "nx: " << nx << ", ny: " << ny << '\n';
+            if (nx == px && ny == py) break;
             switch (dir) {
                 case GO_UP: {
-                    int label = getLabel(grid_label, nx-1, ny);
+                    int label = getLabel(grid_label, nx, ny);
                     if (label == li) {
                         nodes[cnt][0] = nx; nodes[cnt][1] = ny; cnt++;
-                        nx--;
-                        dir = GO_LEFT;
+                        nx++;
+                        dir = GO_RIGHT;
                     } else {
-                        label = getLabel(grid_label, nx, ny);
+                        label = getLabel(grid_label, nx-1, ny);
                         if (label != li) {
                             nodes[cnt][0] = nx; nodes[cnt][1] = ny; cnt++;
-                            nx++;
-                            dir = GO_RIGHT;
+                            nx--;
+                            dir = GO_LEFT;
                         } else {
                             ny++;
                             dir = GO_UP;
@@ -167,17 +168,17 @@ const int &N, const int &num, const int &square_len, const int &maxLabel) {
                     break;
                 }
                 case GO_DOWN: {
-                    int label = getLabel(grid_label, nx, ny-1);
+                    int label = getLabel(grid_label, nx-1, ny-1);
                     if (label == li) {
                         nodes[cnt][0] = nx; nodes[cnt][1] = ny; cnt++;
-                        nx++;
-                        dir = GO_RIGHT;
+                        nx--;
+                        dir = GO_LEFT;
                     } else {
-                        label = getLabel(grid_label, nx-1, ny-1);
+                        label = getLabel(grid_label, nx, ny-1);
                         if (label != li) {
                             nodes[cnt][0] = nx; nodes[cnt][1] = ny; cnt++;
-                            nx--;
-                            dir = GO_LEFT;
+                            nx++;
+                            dir = GO_RIGHT;
                         } else {
                             ny--;
                             dir = GO_DOWN;
@@ -186,17 +187,17 @@ const int &N, const int &num, const int &square_len, const int &maxLabel) {
                     break;
                 }
                 case GO_LEFT: {
-                    int label = getLabel(grid_label, nx-1, ny-1);
+                    int label = getLabel(grid_label, nx-1, ny);
                     if (label == li) {
                         nodes[cnt][0] = nx; nodes[cnt][1] = ny; cnt++;
-                        ny--;
-                        dir = GO_DOWN;
+                        ny++;
+                        dir = GO_UP;
                     } else {
-                        label = getLabel(grid_label, nx-1, ny);
+                        label = getLabel(grid_label, nx-1, ny-1);
                         if (label != li) {
                             nodes[cnt][0] = nx; nodes[cnt][1] = ny; cnt++;
-                            ny++;
-                            dir = GO_UP;
+                            ny--;
+                            dir = GO_DOWN;
                         } else {
                             nx--;
                             dir = GO_LEFT;
@@ -205,17 +206,17 @@ const int &N, const int &num, const int &square_len, const int &maxLabel) {
                     break;
                 }
                 case GO_RIGHT: {
-                    int label = getLabel(grid_label, nx, ny);
+                    int label = getLabel(grid_label, nx, ny-1);
                     if (label == li) {
                         nodes[cnt][0] = nx; nodes[cnt][1] = ny; cnt++;
-                        ny++;
-                        dir = GO_UP;
+                        ny--;
+                        dir = GO_DOWN;
                     } else {
-                        label = getLabel(grid_label, nx, ny-1);
+                        label = getLabel(grid_label, nx, ny);
                         if (label != li) {
                             nodes[cnt][0] = nx; nodes[cnt][1] = ny; cnt++;
-                            ny--;
-                            dir = GO_DOWN;
+                            ny++;
+                            dir = GO_UP;
                         } else {
                             nx++;
                             dir = GO_RIGHT;
@@ -224,20 +225,17 @@ const int &N, const int &num, const int &square_len, const int &maxLabel) {
                     break;
                 }
             }
-            //std::cout << "nx: " << nx << ", ny: " << ny << '\n';
-            if (nx == px && ny == py) {
-                break;
-            }
         }
         tmp_S1 = label_count[li];
-        tmp_S0 = convexityMeasure(nodes, cnt) * tmp_S1;
-        //std::cout << "tmp_S0: " << tmp_S0 << ", tmp_S1: " << tmp_S1 << '\n';
-        // if (li == 0) {
-        //     for (int i = 0; i < cnt; i++) {
-        //         std::cout << nodes[i][0] << ", " << nodes[i][1] << '\n';
-        //     }
+
+        // debug
+        // std::cout << "polygon:\n";
+        // for (int i = 0; i < cnt; i++) {
+        //     std::cout << nodes[i][0] << ", " << nodes[i][1] << '\n';
         // }
-        // std::cout << cnt << '\n';
+
+        tmp_S0 = convexityMeasure(nodes, cnt) * tmp_S1;
+        // std::cout << "tmp_S0: " << tmp_S0 << ", tmp_S1: " << tmp_S1 << '\n';
 
         S1 += tmp_S1;
         S0 += tmp_S0;
