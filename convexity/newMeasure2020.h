@@ -1,9 +1,7 @@
 #ifndef _MEASURE_2020_H
 #define _MEASURE_2020_H
 
-#include "../utils/base.h"
 #include "../utils/convexHull.h"
-#include "../utils/util.h"
 #include <functional>
 #include <float.h>
 
