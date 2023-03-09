@@ -8,82 +8,12 @@
  * Description: Convexity measure of AocK from paper: A Measure of Non-convexity in the Plane and the Minkowski Sum
  * 
  * ***********************************/
-// // for test without base
-// #include<iostream>
-// #include<vector>
-// #include<unordered_set>
-// #include<unordered_map>
-// #include<cmath>
-// template <typename T>
-// inline T max(const T&a, const T& b) {
-//     return a > b ? a 
-//     : b;
-// }
-// template <typename T>
-// inline T min(const T&a, const T& b) {
-//     return a < b ? a : b;
-// }
-// // end for test
 
-#include <unordered_set>
-#include <unordered_map>
-#include <cmath>
 #include "../utils/base.h"
 #include "../utils/geometry.h"
 
 typedef std::vector<double> Point, Vector;
 typedef std::vector<std::vector<double>> PointList, VectorList;
-
-struct pair_hash
-{
-    template<class T1, class T2>
-    std::size_t operator() (const std::pair<T1, T2>& p) const
-    {
-        auto h1 = std::hash<T1>{}(p.first);
-        auto h2 = std::hash<T2>{}(p.second);
-        return h1 ^ h2;
-    }
-};
-
-bool judgePolygonSimple(
-    const PointList & polygon,
-    VectorList & rt_vectors,
-    bool judge_selfinter = false)
-{
-    // judge non-coincide, non-reverse
-    rt_vectors.clear();
-    Vector before {0, 0};
-    for (auto i = 1; i < polygon.size(); i++) {
-        Vector temp {polygon[i][0] - polygon[i-1][0], polygon[i][1] - polygon[i-1][1]};
-        if(temp[0] == 0 && temp[1] == 0) {
-            std::cout << "[AocK]: judgePolygonSimple - polygon coincides." << std::endl;
-            return false;
-        }
-        if((temp[0] * before[1] == temp[1] * before[0]) && temp[0] * before[0] < 0) {
-            std::cout << "[AocK]: judgePolygonSimple - polygon reverses." << std::endl;
-            return false;
-        }
-        rt_vectors.push_back(temp);
-        before = temp;
-    }
-    rt_vectors.push_back(Vector {polygon[0][0] - polygon[polygon.size()-1][0], polygon[0][1] - polygon[polygon.size()-1][1]});
-
-    // judge simple: has no self-intersections
-    if(judge_selfinter) {
-        for (auto i = 2; i < polygon.size(); i++) {
-            for (auto j = 1; j < i - 1; j++) {
-                if(judgeSegmentsIntersect(polygon[i][0], polygon[i][1], polygon[i-1][0], polygon[i-1][1],
-                    polygon[j][0], polygon[j][1], polygon[j-1][0], polygon[j-1][1])) {
-                    // std::cout<< polygon[i][0]<<" " <<polygon[i][1]<<" "<<polygon[i-1][0]<<" " <<polygon[i-1][0]<<std::endl;
-                    // std::cout<< polygon[j][0]<<" " <<polygon[j][1]<<" "<<polygon[j-1][0]<<" " <<polygon[j-1][0]<<std::endl;
-                    std::cout << "[AocK]: judgePolygonSimple - polygon intersects." << std::endl;
-                    return false;
-                }
-            }
-        }
-    }
-    return true;
-}
 
 double checkPolylineAocK(const VectorList & polyline) {
     // return aocK of polyline with double (-infinite, 0]
@@ -168,124 +98,11 @@ std::vector<double> checkPolygonConvexByAocK(
     double perimeter = getPerimeter(vectors, 1);
     for(auto hole_vectors: holes_vectors) {
         double alpha = getPerimeter(hole_vectors, 1) / perimeter;
-        // to be discussed: hole punish
-        AocK += alpha * (checkPolylineAocK(vectors) - 2 * M_PI);
+        AocK += alpha * (checkPolylineAocK(hole_vectors) - 2 * M_PI);
     }
     // to be discussed: translate way
     return std::vector<double> {exp(AocK / M_PI), 1};
 }
-
-static int grid_square = 1;
-static int grid(int x, int y) {
-    return x * grid_square + y;
-}
-static int point_square = 1;
-static int point(int x, int y) {
-    return x * point_square + y;
-}
-static std::vector<double> pos(int point){
-    // std::cout << point <<" "<<point_square << " ";
-    int x = point / point_square;
-    int y = point % point_square;
-    // std::cout << x <<" "<<y << " "<< 1.0 *x << " "<< 1.0 *y << std::endl;
-    return std::vector<double> {1.0 * x, 1.0 * y};
-}
-
-void getClusterBoundary(
-    const std::vector<int> & grid_asses,
-    const std::vector<int> & cluster_labels,
-    std::vector<PointList> & rt_boundary,
-    std::vector<int> & rt_boundary_labels)
-{
-    // get cluster boundary segs
-    int cur_id = 0;
-    std::unordered_map<int, int> label2ids;
-    std::vector<std::unordered_set<std::pair<int, int>, pair_hash>> edges;
-    std::vector<std::unordered_map<int, std::vector<int>>> matrix;
-    int square_len = ceil(sqrt(grid_asses.size()));
-    grid_square = square_len;
-    point_square = square_len + 1;
-
-    for(auto i = 0;i < grid_asses.size(); i++) {
-        int gid = grid_asses[i];
-        int label = cluster_labels[gid];
-        if(label2ids.find(label) == label2ids.end()){
-            label2ids[label] = cur_id;
-            edges.push_back(std::unordered_set<std::pair<int, int>, pair_hash>());
-            matrix.push_back(std::unordered_map<int, std::vector<int>>());
-            cur_id += 1;
-        }
-        int lid = label2ids[label];
-        auto & ledges = edges[lid];
-        auto & lmatrix = matrix[lid];
-        
-        int x = i / square_len;
-        int y = i % square_len;
-        int edge_start, edge_end;
-        if(x == 0 || cluster_labels[grid_asses[grid(x-1, y)]] != label) {
-            edge_start = point(x, y);
-            edge_end = point(x, y+1);
-            ledges.insert(std::pair<int, int>(edge_start, edge_end));
-            lmatrix[edge_start].push_back(edge_end);
-            lmatrix[edge_end].push_back(edge_start);
-        }
-        if(y == 0 || cluster_labels[grid_asses[grid(x, y-1)]] != label) {
-            edge_start = point(x, y);
-            edge_end = point(x+1, y);
-            ledges.insert(std::pair<int, int>(edge_start, edge_end));
-            lmatrix[edge_start].push_back(edge_end);
-            lmatrix[edge_end].push_back(edge_start);
-        }
-        if(x == square_len-1 || cluster_labels[grid_asses[grid(x+1, y)]] != label) {
-            edge_start = point(x+1, y);
-            edge_end = point(x+1, y+1);
-            ledges.insert(std::pair<int, int>(edge_start, edge_end));
-            lmatrix[edge_start].push_back(edge_end);
-            lmatrix[edge_end].push_back(edge_start);
-        }
-        if(y == square_len-1 || cluster_labels[grid_asses[grid(x, y+1)]] != label) {
-            edge_start = point(x, y+1);
-            edge_end = point(x+1, y+1);
-            ledges.insert(std::pair<int, int>(edge_start, edge_end));
-            lmatrix[edge_start].push_back(edge_end);
-            lmatrix[edge_end].push_back(edge_start);
-        }
-    }
-
-    // connect boundary
-    rt_boundary.clear();
-    rt_boundary_labels.clear();
-    for(auto it = label2ids.begin(); it != label2ids.end(); it++) {
-        int label = it->first;
-        int lid = it->second;
-        auto & ledges = edges[lid];
-        auto & lmatrix = matrix[lid];
-        while(!ledges.empty()) {
-            auto edge_head = *ledges.begin();
-            ledges.erase(ledges.begin());
-            PointList points;
-            points.push_back(pos(edge_head.first));
-            int start = edge_head.first;
-            int now = edge_head.second;
-            int bf = start;
-            while(now != start) {
-                auto & link = lmatrix[now];
-                int nxt = 0;
-                if(link[0] == bf) {
-                    nxt = link[1];
-                }
-                else nxt = link[0];
-                ledges.erase(std::pair<int, int>(min(now, nxt), max(now, nxt)));
-                points.push_back(pos(now));
-                bf = now;
-                now = nxt;
-            }
-            rt_boundary.push_back(points);
-            rt_boundary_labels.push_back(label);
-        }
-    }
-}
-
 
 std::vector<double> checkConvexForAocK(
     const std::vector<int> &_grid_asses,
