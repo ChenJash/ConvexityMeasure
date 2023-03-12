@@ -9,6 +9,7 @@
 #include <vector>
 #include <utility>
 #include <ctime>
+#include <cmath>
 
 #define THREADS_NUM 48
 

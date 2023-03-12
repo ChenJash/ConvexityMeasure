@@ -92,6 +92,17 @@ double getPerimeter(const std::vector<std::vector<double>> & vcs, const int type
     return res;
 }
 
+double getArea(const std::vector<std::vector<double>> & polygon) {
+    if(polygon.size() <= 2) return 0;
+    double area = 0;
+    for(int i=0;i < polygon.size() - 1; i++){
+        double triArea = (polygon[i][0]*polygon[i+1][1] - polygon[i+1][0]*polygon[i][1]) / 2;
+        area += triArea;
+    }
+    double fn = (polygon[polygon.size()-1][0]*polygon[0][1] - polygon[0][0]*polygon[polygon.size()-1][1])/2;
+    return abs(area+fn);
+}
+
 double getVectorLength(const std::vector<double> vc){
     return sqrt(vc[0] * vc[0] + vc[1] * vc[1]);
 }
