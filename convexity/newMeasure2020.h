@@ -1,7 +1,9 @@
 #ifndef _MEASURE_2020_H
 #define _MEASURE_2020_H
 
+#include "../utils/base.h"
 #include "../utils/convexHull.h"
+#include "../utils/util.h"
 #include <functional>
 #include <float.h>
 
@@ -106,6 +108,7 @@ int save_CH_cnt[]=nullptr, double translate[][5]=nullptr) {
 //            射线法：用于判断一个点是否在一个区域内。
 //        希望该函数的复杂度控制在O(grids_n * k * m)，其中k为每个格子中枚举的点的个数，m为凸包的边数。
 
+    if(grids_n==0)return 0;
     // STEP1: get centroid & area of the input shape
     int n = grids_n;
     double area = n;    // assume that a single grid has area of 1
@@ -386,6 +389,7 @@ bool save=false, bool load=false, double label_pairs[][2]=nullptr, int mainLabel
         tmp_S0 = checkConvex2020(nodes, cnt)*tmp_S1;
         S1 += tmp_S1;
         S0 += tmp_S0;
+//        printf("%d %.2lf %.2lf\n", li, tmp_S0, tmp_S1);
         if(save){
             label_pairs[li][0] = tmp_S0;
             label_pairs[li][1] = tmp_S1;
@@ -394,6 +398,7 @@ bool save=false, bool load=false, double label_pairs[][2]=nullptr, int mainLabel
     std::vector<double> S_pair(2, 0);
     S_pair[0] = (S1-S0);
     S_pair[1] = S1;
+//    printf("%d %.2lf %.2lf\n", maxLabel, S_pair[0], S_pair[1]);
 
     delete[] head;
     delete[] last;

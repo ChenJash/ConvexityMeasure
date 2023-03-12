@@ -338,7 +338,6 @@ const int &N, const int &num, const int &square_len, const int &maxLabel) {
                 if(lb1!=lb0)T0 += times;
             }
         }
-
     }
 
     std::vector<double> T_pair(2, 0);
@@ -437,27 +436,29 @@ const int &N, const int &num, const int &square_len, const int &maxLabel) {
             int id1 = grid_asses[gid1];
             int id0 = grid_asses[gid0];
             int id2 = grid_asses[gid2];
-            if((id1>=num)||(id2>=num))continue;
-            int lb1 = cluster_labels[id1];
-            int lb2 = cluster_labels[id2];
-            int lb0 = -1;
-            if(id0<num)lb0 = cluster_labels[id0];
-            if(lb1==lb2){
-                T1 += times;
-                if(lb1!=lb0)T0 += times;
+            if((id1<num)&&(id2<num)) {
+                int lb1 = cluster_labels[id1];
+                int lb2 = cluster_labels[id2];
+                int lb0 = -1;
+                if(id0<num)lb0 = cluster_labels[id0];
+                if(lb1==lb2){
+                    T1 += times;
+                    if(lb1!=lb0)T0 += times;
+                }
             }
 
             id1 = old_grid_asses[gid1];
             id0 = old_grid_asses[gid0];
             id2 = old_grid_asses[gid2];
-            if((id1>=num)||(id2>=num))continue;
-            lb1 = cluster_labels[id1];
-            lb2 = cluster_labels[id2];
-            lb0 = -1;
-            if(id0<num)lb0 = cluster_labels[id0];
-            if(lb1==lb2){
-                dec_T1 += times;
-                if(lb1!=lb0)dec_T0 += times;
+            if((id1<num)&&(id2<num)) {
+                int lb1 = cluster_labels[id1];
+                int lb2 = cluster_labels[id2];
+                int lb0 = -1;
+                if(id0<num)lb0 = cluster_labels[id0];
+                if(lb1==lb2){
+                    dec_T1 += times;
+                    if(lb1!=lb0)dec_T0 += times;
+                }
             }
         }
     }
@@ -848,7 +849,9 @@ bool save=false, bool load=false, int old_grid_asses[]=nullptr, double old_T_pai
     full = T_pair[1];
     correct = T_pair[1]-T_pair[0];
 
-    double Convex_cost = (full-correct)/full;
+    double Convex_cost;
+    if(full<0.000001)Convex_cost = 0;
+    else Convex_cost = (full-correct)/full;
     // printf("Convex_cost %.2lf\n", Convex_cost);
     double Similar_cost = 0;
     double Compact_cost = 0;

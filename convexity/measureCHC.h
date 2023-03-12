@@ -43,7 +43,7 @@ bool save=false, bool load=false, double label_pairs[][2]=nullptr, int mainLabel
             continue;
         }
         int cnt=0;
-        double tmp_C0=0, tmp_C1=0;
+        double tmp_C0=0, tmp_C1=0, tmp_S=0;
         for(int id=head[li];id>=0;id=last[id]){
             int gid = element_asses[id];
             int x = gid/square_len;
@@ -53,10 +53,17 @@ bool save=false, bool load=false, double label_pairs[][2]=nullptr, int mainLabel
             nodes[cnt][0] = x; nodes[cnt][1] = y+1; cnt++;
             nodes[cnt][0] = x+1; nodes[cnt][1] = y+1; cnt++;
             tmp_C1 += E_grid[gid];
+            tmp_S += 1;
         }
         cnt = getConvexHull(cnt, nodes);
 
         tmp_C0 = getCofPoly(cnt, nodes);
+
+//        tmp_C0 = tmp_C0/tmp_C1*tmp_S;
+//        tmp_C1 = tmp_S;
+
+//        printf("C0 %d %.2lf %.2lf\n", li, tmp_C0, tmp_C1);
+
         C0 += tmp_C0;
         C1 += tmp_C1;
         if(save){

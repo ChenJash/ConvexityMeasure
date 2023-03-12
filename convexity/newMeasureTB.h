@@ -13,10 +13,11 @@ const int &gid1, const int &gid0, const int &gid2){
     int id1 = grid_asses[gid1];
     int id0 = grid_asses[gid0];
     int id2 = grid_asses[gid2];
-    if((id1>=num)||(id0>=num)||(id2>=num))return -1;
+    if((id1>=num)||(id2>=num))return -1;
     int lb1 = cluster_labels[id1];
-    int lb0 = cluster_labels[id0];
     int lb2 = cluster_labels[id2];
+    int lb0 = -1;
+    if(id0<num)lb0 = cluster_labels[id0];
     if(lb1!=lb2)return -1;
     if(lb1!=lb0)return 1;
     return 0;
@@ -90,7 +91,7 @@ const int &gid1, const int &gid2){
         int tp = (std::max(startX, endX)+1)/2;
         int x = bt;
         while(x<tp){
-            if(startY%2==0) {
+            if(startY%2==1) {
                 int gid_mid = x*square_len+(startY/2);
                 if(checkTriple(grid_asses, cluster_labels, N, num, gid1, gid_mid, gid2)==1)
                 return 0;
@@ -200,7 +201,6 @@ bool save=false, bool load=false, double label_pairs[][2]=nullptr, int mainLabel
                 tmp_T0 += pair[0];
                 tmp_T1 += pair[1];
             }
-
         }
         T1 += tmp_T1;
         T0 += tmp_T0;
