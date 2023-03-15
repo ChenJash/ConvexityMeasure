@@ -246,7 +246,7 @@ const int &N, const int &num, const int &square_len, const int &maxLabel) {
         // }
 
         tmp_S0 = getCV(nodes, cnt) * tmp_S1;
-        std::cout << "tmp_S0: " << tmp_S0 << ", tmp_S1: " << tmp_S1 << '\n';
+        // std::cout << "tmp_S0: " << tmp_S0 << ", tmp_S1: " << tmp_S1 << '\n';
 
         S1 += tmp_S1;
         S0 += tmp_S0;
