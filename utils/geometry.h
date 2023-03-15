@@ -180,9 +180,11 @@ void getClusterBoundary(
     int square_len = ceil(sqrt(grid_asses.size()));
     grid_square = square_len;
     point_square = square_len + 1;
+    int lns = cluster_labels.size();
 
     for(auto i = 0;i < grid_asses.size(); i++) {
         int gid = grid_asses[i];
+        if(gid >= lns) continue;
         int label = cluster_labels[gid];
         if(label2ids.find(label) == label2ids.end()){
             label2ids[label] = cur_id;
@@ -197,28 +199,28 @@ void getClusterBoundary(
         int x = i / square_len;
         int y = i % square_len;
         int edge_start, edge_end;
-        if(x == 0 || cluster_labels[grid_asses[grid(x-1, y)]] != label) {
+        if(x == 0 || grid_asses[grid(x-1, y)] >= lns || cluster_labels[grid_asses[grid(x-1, y)]] != label) {
             edge_start = point(x, y);
             edge_end = point(x, y+1);
             ledges.insert(std::pair<int, int>(edge_start, edge_end));
             lmatrix[edge_start].push_back(edge_end);
             lmatrix[edge_end].push_back(edge_start);
         }
-        if(y == 0 || cluster_labels[grid_asses[grid(x, y-1)]] != label) {
+        if(y == 0 || grid_asses[grid(x, y-1)] >= lns || cluster_labels[grid_asses[grid(x, y-1)]] != label) {
             edge_start = point(x, y);
             edge_end = point(x+1, y);
             ledges.insert(std::pair<int, int>(edge_start, edge_end));
             lmatrix[edge_start].push_back(edge_end);
             lmatrix[edge_end].push_back(edge_start);
         }
-        if(x == square_len-1 || cluster_labels[grid_asses[grid(x+1, y)]] != label) {
+        if(x == square_len-1 || grid_asses[grid(x+1, y)] >= lns || cluster_labels[grid_asses[grid(x+1, y)]] != label) {
             edge_start = point(x+1, y);
             edge_end = point(x+1, y+1);
             ledges.insert(std::pair<int, int>(edge_start, edge_end));
             lmatrix[edge_start].push_back(edge_end);
             lmatrix[edge_end].push_back(edge_start);
         }
-        if(y == square_len-1 || cluster_labels[grid_asses[grid(x, y+1)]] != label) {
+        if(y == square_len-1 || grid_asses[grid(x, y+1)] >= lns || cluster_labels[grid_asses[grid(x, y+1)]] != label) {
             edge_start = point(x, y+1);
             edge_end = point(x+1, y+1);
             ledges.insert(std::pair<int, int>(edge_start, edge_end));
