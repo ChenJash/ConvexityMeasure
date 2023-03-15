@@ -6,6 +6,8 @@
 #include <cmath>
 #include <float.h>
 
+const double tolerance = 0.0000001;   // used for judging whether two `double`s are the same
+
 // constants
 namespace Deviation {
     const double epsilon = 0.01;
@@ -66,8 +68,8 @@ const double scale_rate) {
     // 找到 grids[] 里与 convex_hull[0] 相同的顶点
     int index = 0;
     for (int i = 0; i < grids_n; i++) {
-        if ((double)grids[i][0] == convex_hull[0][0] 
-            && (double)grids[i][1] == convex_hull[0][1]) {
+        if (std::abs(grids[i][0] - convex_hull[0][0]) < tolerance
+            && std::abs(grids[i][1] - convex_hull[0][1]) < tolerance) {
             index = i;
             break;
         }
@@ -82,8 +84,8 @@ const double scale_rate) {
         double y2 = convex_hull[new_pos][1];
         while (true) {
             index = (index + 1) % grids_n;
-            if ((double)grids[index][0] == x2 
-            && (double)grids[index][1] == y2) {
+            if (std::abs(grids[index][0] - x2) < tolerance 
+            && std::abs(grids[index][1] - y2) < tolerance) {
                 break;
             }
             // else
@@ -98,6 +100,8 @@ const double scale_rate) {
     return result / scale_rate;
 }
 
+// modified:
+// 与论文不同，这里我们考虑所有顶点的凹陷深度之和作为 total index
 double getTotalDeviation(
 const int grids[][2],
 const int grids_n,
@@ -111,8 +115,8 @@ const double scale_rate) {
 
     int index = 0;
     for (int i = 0; i < grids_n; i++) {
-        if ((double)grids[i][0] == convex_hull[0][0] 
-        && (double)grids[i][1] == convex_hull[0][1]) {
+        if (std::abs(grids[i][0] - convex_hull[0][0]) < tolerance 
+        && std::abs(grids[i][1] - convex_hull[0][1]) < tolerance) {
             index = i;
             break;
         }
@@ -125,19 +129,17 @@ const double scale_rate) {
         double y1 = convex_hull[pos][1];
         double x2 = convex_hull[new_pos][0];
         double y2 = convex_hull[new_pos][1];
-        double deviation = 0;
         while (true) {
             index = (index + 1) % grids_n;
-            if ((double)grids[index][0] == x2 
-            && (double)grids[index][1] == y2) {
+            if (std::abs(grids[index][0] - x2) < tolerance 
+            && std::abs(grids[index][1] - y2) < tolerance) {
                 break;
             }
             // else
             double x = (double)grids[index][0];
             double y = (double)grids[index][1];
-            deviation = std::max(deviation, pointDist2Line(x, y, x1, y1, x2, y2) / scale_rate);
+            result += pointDist2Line(x, y, x1, y1, x2, y2) / scale_rate;
         }
-        result = (deviation > Deviation::epsilon) ? result + deviation : result;
     }
 
     delete [] convex_hull;
