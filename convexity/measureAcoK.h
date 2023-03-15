@@ -5,7 +5,7 @@
  * 
  * Author: Jiashu
  * Date: 2023-03-08
- * Description: Convexity measure of AocK from paper: A Measure of Non-convexity in the Plane and the Minkowski Sum
+ * Description: Convexity measure of AcoK from paper: A Measure of Non-convexity in the Plane and the Minkowski Sum
  * 
  * ***********************************/
 
@@ -15,7 +15,7 @@
 typedef std::vector<double> Point, Vector;
 typedef std::vector<std::vector<double>> PointList, VectorList;
 
-double checkPolylineAocK(const VectorList & polyline) {
+double checkPolylineAcoK(const VectorList & polyline) {
     // return aocK of polyline with double (-infinite, 0]
     std::vector<double> angles;
     double angle_sum = 0;
@@ -78,7 +78,7 @@ double checkPolylineAocK(const VectorList & polyline) {
     return min_rot;
 }
 
-std::vector<double> checkPolygonConvexByAocK(
+std::vector<double> checkPolygonConvexByAcoK(
     const PointList & polygon,
     const std::vector<PointList> & holes) 
 {
@@ -94,17 +94,17 @@ std::vector<double> checkPolygonConvexByAocK(
     }
 
     // calculate rot list, get aocK by dp
-    double AocK = checkPolylineAocK(vectors);
+    double AcoK = checkPolylineAcoK(vectors);
     double perimeter = getPerimeter(vectors, 1);
     for(auto hole_vectors: holes_vectors) {
         double alpha = getPerimeter(hole_vectors, 1) / perimeter;
-        AocK += alpha * (checkPolylineAocK(hole_vectors) - 2 * M_PI);
+        AcoK += alpha * (checkPolylineAcoK(hole_vectors) - 2 * M_PI);
     }
     // to be discussed: translate way
-    return std::vector<double> {exp(AocK / M_PI), 1};
+    return std::vector<double> {exp(AcoK / M_PI), 1};
 }
 
-std::vector<double> checkConvexForAocK(
+std::vector<double> checkConvexForAcoK(
     const std::vector<int> &_grid_asses,
     const std::vector<int> &_cluster_labels)
 {   
@@ -141,7 +141,7 @@ std::vector<double> checkConvexForAocK(
         }
         labels.push_back(cur_label);
         perimeters.push_back(total_perimeter);
-        results.push_back(checkPolygonConvexByAocK(polygon, holes));
+        results.push_back(checkPolygonConvexByAcoK(polygon, holes));
         cur_idx = fin_idx;
     }
 
@@ -155,7 +155,55 @@ std::vector<double> checkConvexForAocK(
         a += perimeters[i] * results[i][0];
         b += perimeters[i] * results[i][1];
     }
-    return std::vector<double> {a, b};
+    return std::vector<double> {b - a, b};
+}
+
+std::vector<double> checkConvexForAcoKArray(
+    const int grid_asses[],
+    const int cluster_labels[],
+    const int &N, const int &num, const int &square_len, const int &maxLabel)
+{
+    return checkConvexForAcoK(std::vector<int>(grid_asses, grid_asses+N), std::vector<int>(cluster_labels, cluster_labels+num))
+}
+
+std::vector<double> checkCostForAcoK(
+    const double Similar_cost_matrix[],
+    const double Compact_cost_matrix[],
+    const int grid_asses[], const int cluster_labels[],
+    const int &N, const int &num, const int &square_len, const int &maxLabel,
+    const double &alpha, const double &beta) {
+
+    std::vector<double> A_pair = checkConvexForAcoKArray(grid_asses, cluster_labels, N, num, square_len, maxLabel);
+    double correct=0, full=0;
+    full = A_pair[1];
+    correct = A_pair[1]-A_pair[0];
+
+    double Convex_cost = (full-correct)/full;
+    double Similar_cost = 0;
+    double Compact_cost = 0;
+    double cost = 0;
+
+    int *element_asses = new int[num];
+    for(int i=0;i<N;i++)if(grid_asses[i]<num)element_asses[grid_asses[i]] = i;
+
+    for(int i=0;i<num;i++){
+        Similar_cost += Similar_cost_matrix[element_asses[i]*N+i];
+        Compact_cost += Compact_cost_matrix[element_asses[i]*N+i];
+        cost += Similar_cost_matrix[element_asses[i]*N+i] * (1-beta-alpha);
+        cost += Compact_cost_matrix[element_asses[i]*N+i] * beta;
+    }
+    cost += Convex_cost * N * alpha;
+
+    // printf("cost %.2lf %.2lf %.2lf %.2lf %.2lf %.2lf\n", Similar_cost, Compact_cost, Convex_cost*N, beta, alpha, cost);
+
+    delete[] element_asses;
+
+    std::vector<double> ret(4, 0);
+    ret[0] = cost;
+    ret[1] = Similar_cost;
+    ret[2] = Compact_cost;
+    ret[3] = Convex_cost*N;
+    return ret;
 }
 
 #endif
