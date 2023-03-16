@@ -270,7 +270,7 @@ std::vector<double> checkCostForSC(
     const int &N, const int &num, const int &square_len, const int &maxLabel,
     const double &alpha, const double &beta) {
 
-    std::vector<double> SC_pair = checkConvexForSC(grid_asses, cluster_labels, N, num, square_len, maxLabel);
+    std::vector<double> SC_pair = checkConvexForSCArray(grid_asses, cluster_labels, N, num, square_len, maxLabel);
     double correct=0, full=0;
     full = SC_pair[1];
     correct = SC_pair[1]-SC_pair[0];

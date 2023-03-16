@@ -116,7 +116,7 @@ std::vector<double> checkCostForMoS(
     const int &N, const int &num, const int &square_len, const int &maxLabel,
     const double &alpha, const double &beta) {
 
-    std::vector<double> MoS_pair = checkConvexForMoS(grid_asses, cluster_labels, N, num, square_len, maxLabel);
+    std::vector<double> MoS_pair = checkConvexForMoSArray(grid_asses, cluster_labels, N, num, square_len, maxLabel);
     double correct=0, full=0;
     full = MoS_pair[1];
     correct = MoS_pair[1]-MoS_pair[0];
