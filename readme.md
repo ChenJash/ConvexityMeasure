@@ -1,7 +1,9 @@
+# ConvexityMeasure 
+
 ### 基本介绍
 本仓库使用C++实现了一些不同论文中涉及的2D凸性度量，提供了网格布局中相对统一的凸性接口调用:
 
-代码是以下工作的一部分 [https://github.com/thu-vis/Cluster-Aware-Grid-Layout](https://github.com/thu-vis/Cluster-Aware-Grid-Layout),即将发表在TVCG2023
+代码是以下工作的一部分 [https://github.com/thu-vis/Cluster-Aware-Grid-Layout](https://github.com/thu-vis/Cluster-Aware-Grid-Layout) ，即将发表在TVCG2023
 
 ![图片](https://github.com/ChenJash/ConvexityMeasure/assets/70832896/51ba3085-14b6-4ec2-a9d7-9c36b691f797)
 ![图片](https://github.com/ChenJash/ConvexityMeasure/assets/70832896/7bbe5f67-f390-474b-b5c0-329c47a878b8)
