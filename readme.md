@@ -31,9 +31,6 @@ const std::vector<int> &_cluster_labels); // 标准数据
 
 
 #### 记录完成情况
-
-做之前/做完一个measure在下面的文档更新一下状态，保证不重复工作即可：
-
 【腾讯文档】Convexity Measure 完成情况
 https://docs.qq.com/sheet/DRlVPYkhNd1ZQVkNF?tab=BB08J2
 ![图片](https://github.com/ChenJash/ConvexityMeasure/assets/70832896/8686d30f-b35b-40b4-94b2-8d1c1dddde85)
